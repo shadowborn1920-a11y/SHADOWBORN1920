@@ -1,0 +1,1414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>SHADOWBORN — Born From The Shadows</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@300;400;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --bg:#000;--s1:#080808;--s2:#0f0f0f;--s3:#141414;
+  --b1:#1a1a1a;--b2:#222;--b3:#333;--b4:#444;
+  --w:#f0f0f0;--w2:#cccccc;--w3:#aaaaaa;
+  --g:#555;--lg:#888;--dg:#2a2a2a;
+  --red:#cc0000;--red2:#880000;--gold:#c9a84c;
+}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--w);font-family:'Rajdhani',sans-serif;overflow-x:hidden;cursor:none;}
+
+/* CURSOR */
+#cursor{position:fixed;width:6px;height:6px;background:#fff;border-radius:50%;pointer-events:none;z-index:99999;transform:translate(-50%,-50%);transition:transform .08s;}
+#cursor-ring{position:fixed;width:26px;height:26px;border:1px solid rgba(255,255,255,0.4);border-radius:50%;pointer-events:none;z-index:99998;transform:translate(-50%,-50%);transition:all .12s;}
+body:hover #cursor{opacity:1;}
+
+/* ANIMATION CANVAS */
+#anim-canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;opacity:1;}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:2px;}
+::-webkit-scrollbar-track{background:#000;}
+::-webkit-scrollbar-thumb{background:#333;}
+
+/* NOISE OVERLAY */
+.noise{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:0.03;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");background-repeat:repeat;background-size:128px 128px;}
+
+/* ══ NAVBAR ══ */
+#nav{
+  position:fixed;top:0;left:0;right:0;z-index:1000;
+  padding:16px 40px;
+  display:flex;align-items:center;justify-content:space-between;
+  background:rgba(0,0,0,0.9);
+  border-bottom:1px solid rgba(255,255,255,0.06);
+  backdrop-filter:blur(12px);
+  transition:all .3s;
+}
+#nav.scrolled{border-bottom-color:rgba(255,255,255,0.1);}
+.nav-logo{font-family:'Bebas Neue';font-size:20px;letter-spacing:6px;color:#fff;cursor:pointer;}
+.nav-logo span{color:var(--g);}
+.nav-links{display:flex;gap:28px;align-items:center;}
+.nav-link{font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--g);cursor:pointer;transition:color .2s;text-decoration:none;}
+.nav-link:hover{color:#fff;}
+.nav-apply-btn{
+  font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;
+  padding:7px 16px;border:1px solid rgba(255,255,255,0.2);color:#fff;
+  background:transparent;cursor:pointer;transition:all .2s;font-family:'Rajdhani';
+}
+.nav-apply-btn:hover{background:#fff;color:#000;}
+
+/* ══ SECTIONS ══ */
+section{position:relative;z-index:2;}
+
+/* ══ HERO ══ */
+#hero{
+  min-height:100vh;display:flex;align-items:center;justify-content:center;
+  flex-direction:column;text-align:center;padding:80px 20px 40px;
+  position:relative;
+}
+.hero-line{position:absolute;top:0;left:0;right:0;bottom:0;background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(255,255,255,0.008) 3px,rgba(255,255,255,0.008) 4px);pointer-events:none;z-index:1;}
+.hero-tag{font-size:9px;font-weight:700;letter-spacing:6px;color:var(--g);text-transform:uppercase;margin-bottom:22px;font-family:'Share Tech Mono';animation:fu .8s ease both;position:relative;z-index:2;}
+.hero-title{
+  font-family:'Bebas Neue';
+  font-size:clamp(70px,14vw,150px);
+  letter-spacing:8px;line-height:.88;
+  color:#fff;position:relative;z-index:2;
+  animation:fu .8s .15s ease both;
+}
+.hero-title .dim{color:var(--b4);}
+.hero-glitch{position:relative;display:inline-block;}
+.hero-glitch::before,.hero-glitch::after{content:attr(data-text);position:absolute;top:0;left:0;font-family:'Bebas Neue';font-size:inherit;letter-spacing:inherit;}
+.hero-glitch::before{color:rgba(255,255,255,0.15);animation:gl1 4s infinite;clip-path:polygon(0 20%,100% 20%,100% 50%,0 50%);}
+.hero-glitch::after{color:rgba(255,255,255,0.08);animation:gl2 4s infinite;clip-path:polygon(0 60%,100% 60%,100% 80%,0 80%);}
+@keyframes gl1{0%,90%,100%{transform:none;opacity:0;}91%{transform:translateX(-4px);opacity:1;}93%{transform:translateX(4px);opacity:1;}95%{transform:none;opacity:0;}}
+@keyframes gl2{0%,88%,100%{transform:none;opacity:0;}89%{transform:translateX(3px);opacity:1;}91%{transform:translateX(-3px);opacity:1;}93%{transform:none;opacity:0;}}
+.hero-sub{font-size:12px;font-weight:300;letter-spacing:6px;color:var(--g);text-transform:uppercase;margin:22px 0 8px;animation:fu .8s .3s ease both;position:relative;z-index:2;}
+.hero-motto{font-family:'Share Tech Mono';font-size:12px;color:rgba(255,255,255,0.3);letter-spacing:2px;margin-bottom:36px;animation:fu .8s .4s ease both;position:relative;z-index:2;}
+.hero-motto::before{content:'> ';}
+.hero-motto::after{content:'_';animation:blink .8s infinite;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:0;}}
+.hero-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;animation:fu .8s .5s ease both;position:relative;z-index:2;}
+.hbtn{font-family:'Rajdhani';font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;padding:12px 28px;cursor:pointer;transition:all .3s;text-decoration:none;display:inline-block;border:none;}
+.hbtn-p{background:#fff;color:#000;}.hbtn-p:hover{background:transparent;color:#fff;border:1px solid rgba(255,255,255,0.3);}
+.hbtn-s{background:transparent;color:var(--w3);border:1px solid var(--b3);}.hbtn-s:hover{border-color:#fff;color:#fff;}
+.hbtn-apply{background:transparent;color:#fff;border:1px solid rgba(255,255,255,0.5);}.hbtn-apply:hover{background:#fff;color:#000;}
+.hero-stats{display:flex;gap:50px;margin-top:50px;animation:fu .8s .7s ease both;position:relative;z-index:2;}
+.hstat{text-align:center;}
+.hstat-n{font-family:'Bebas Neue';font-size:46px;color:#fff;line-height:1;}
+.hstat-l{font-size:9px;letter-spacing:3px;color:var(--g);text-transform:uppercase;margin-top:2px;}
+.scroll-ind{position:absolute;bottom:28px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:5px;color:var(--g);font-size:8px;letter-spacing:3px;animation:fu 1s 1s ease both;z-index:2;}
+.scroll-line{width:1px;height:40px;background:linear-gradient(to bottom,transparent,rgba(255,255,255,0.3));animation:sp 2s infinite;}
+@keyframes sp{0%,100%{opacity:.2;}50%{opacity:.8;}}
+@keyframes fu{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:none;}}
+
+/* ══ SECTION COMMON ══ */
+.sw{padding:90px 60px;max-width:1200px;margin:0 auto;}
+.sec-tag{font-family:'Share Tech Mono';font-size:9px;letter-spacing:5px;color:var(--b4);text-transform:uppercase;margin-bottom:10px;}
+.sec-title{font-family:'Bebas Neue';font-size:clamp(38px,5vw,60px);letter-spacing:4px;color:#fff;margin-bottom:8px;}
+.sec-div{width:40px;height:1px;background:#fff;margin-bottom:32px;opacity:.3;}
+.sec-desc{font-size:13px;color:var(--lg);line-height:1.9;max-width:580px;margin-bottom:36px;}
+
+/* ══ ABOUT ══ */
+#about{background:linear-gradient(180deg,#000 0%,#040404 50%,#000 100%);}
+.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;}
+.about-text p{font-size:13px;color:var(--lg);line-height:1.9;margin-bottom:14px;}
+.about-text p b{color:#fff;font-weight:700;}
+.pillars{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:22px;}
+.pillar{padding:14px;border:1px solid var(--b2);border-left:2px solid rgba(255,255,255,0.15);background:var(--s1);transition:all .2s;}
+.pillar:hover{background:var(--s2);border-left-color:rgba(255,255,255,0.4);}
+.pillar-ic{font-size:18px;margin-bottom:5px;}
+.pillar-t{font-family:'Bebas Neue';font-size:13px;letter-spacing:2px;color:#fff;}
+.pillar-d{font-size:10px;color:var(--g);margin-top:1px;}
+.about-visual{display:flex;align-items:center;justify-content:center;position:relative;}
+.av-box{
+  width:260px;height:260px;border:1px solid rgba(255,255,255,0.06);
+  display:flex;align-items:center;justify-content:center;
+  font-size:100px;position:relative;
+  animation:boxpulse 4s ease infinite;
+}
+@keyframes boxpulse{0%,100%{box-shadow:0 0 0 0 rgba(255,255,255,0);}50%{box-shadow:0 0 40px 1px rgba(255,255,255,0.04);}}
+.av-ring1{position:absolute;width:310px;height:310px;border:1px solid rgba(255,255,255,0.04);border-radius:50%;animation:rspin 20s linear infinite;}
+.av-ring2{position:absolute;width:360px;height:360px;border:1px solid rgba(255,255,255,0.02);border-radius:50%;animation:rspin 30s linear infinite reverse;}
+.av-dot{position:absolute;top:-3px;left:50%;width:5px;height:5px;background:#fff;border-radius:50%;margin-left:-2px;opacity:.4;}
+@keyframes rspin{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
+
+/* ══ RANKS ══ */
+#ranks{background:#000;}
+.ranks-grid{display:grid;gap:6px;}
+.rank-card{
+  display:flex;align-items:center;gap:20px;
+  padding:18px 22px;background:var(--s1);border:1px solid var(--b1);
+  border-left:2px solid transparent;transition:all .25s;
+}
+.rank-card:hover{background:var(--s2);border-left-color:rgba(255,255,255,0.2);}
+.rank-card.king-card{border-left-color:rgba(255,255,255,0.15);}
+.rank-n{font-family:'Bebas Neue';font-size:34px;color:var(--b3);width:38px;flex-shrink:0;line-height:1;}
+.rank-info{flex:1;}
+.rank-name{font-family:'Bebas Neue';font-size:18px;letter-spacing:3px;margin-bottom:2px;color:#fff;}
+.rank-desc{font-size:11px;color:var(--g);line-height:1.6;}
+.rank-badge2{display:inline-flex;align-items:center;gap:4px;padding:2px 7px;font-size:8px;font-weight:700;letter-spacing:2px;text-transform:uppercase;border:1px solid rgba(255,255,255,0.1);color:var(--lg);margin-bottom:4px;}
+.rank-ct{text-align:right;flex-shrink:0;}
+.rank-ct b{font-family:'Bebas Neue';font-size:28px;display:block;color:#fff;}
+.rank-ct span{font-size:9px;color:var(--g);letter-spacing:1px;}
+
+/* ══ MEMBERS ══ */
+#members-sec{background:linear-gradient(180deg,#000,#030303,#000);}
+.members-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;}
+.mc{
+  background:var(--s1);border:1px solid var(--b1);
+  padding:20px;text-align:center;transition:all .25s;
+  position:relative;overflow:hidden;
+}
+.mc::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.1),transparent);opacity:0;transition:opacity .3s;}
+.mc:hover{background:var(--s2);transform:translateY(-2px);}.mc:hover::after{opacity:1;}
+.mc-av{font-size:32px;margin-bottom:10px;}
+.mc-name{font-family:'Bebas Neue';font-size:16px;letter-spacing:2px;margin-bottom:2px;}
+.mc-nick{font-size:10px;color:var(--g);margin-bottom:8px;}
+.mc-rank{display:inline-block;font-size:8px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:2px 7px;border:1px solid rgba(255,255,255,0.1);color:var(--lg);margin-bottom:6px;}
+.mc-city{font-size:10px;color:var(--g);letter-spacing:1px;}
+
+/* ══ RULES ══ */
+#rules-sec{background:#000;}
+.rules-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.rc{background:var(--s1);border:1px solid var(--b1);padding:20px;transition:all .2s;}
+.rc:hover{background:var(--s2);}
+.rn{font-family:'Bebas Neue';font-size:40px;color:var(--b3);line-height:1;margin-bottom:5px;}
+.rt{font-family:'Bebas Neue';font-size:15px;letter-spacing:2px;color:#fff;margin-bottom:5px;}
+.rd{font-size:11px;color:var(--g);line-height:1.7;}
+.rp{display:inline-block;margin-top:8px;font-size:8px;font-weight:700;letter-spacing:2px;padding:2px 8px;background:rgba(204,0,0,0.1);color:rgba(255,100,100,0.8);border:1px solid rgba(204,0,0,0.15);}
+
+/* ══ EVENTS ══ */
+#events-sec{background:linear-gradient(180deg,#000,#030303,#000);}
+.events-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px;}
+.ec2{background:var(--s1);border:1px solid var(--b1);border-top:1px solid rgba(255,255,255,0.12);padding:18px;transition:all .2s;}
+.ec2:hover{background:var(--s2);}
+.ev-d2{font-family:'Share Tech Mono';font-size:9px;color:var(--b4);letter-spacing:2px;margin-bottom:5px;}
+.ev-n2{font-family:'Bebas Neue';font-size:20px;letter-spacing:2px;margin-bottom:5px;}
+.ev-desc2{font-size:11px;color:var(--g);line-height:1.7;margin-bottom:8px;}
+.ev-meta2{display:flex;gap:10px;font-size:9px;color:var(--g);letter-spacing:1px;}
+
+/* ══ COMMANDER ══ */
+#commander{background:#000;padding:80px 0;}
+.cmd-wrap{max-width:800px;margin:0 auto;padding:0 60px;text-align:center;}
+.cmd-box{background:var(--s1);border:1px solid var(--b1);padding:50px 40px;position:relative;overflow:hidden;}
+.cmd-box::before{content:'SHADOWBORN';position:absolute;font-family:'Bebas Neue';font-size:120px;letter-spacing:20px;color:rgba(255,255,255,0.015);top:50%;left:50%;transform:translate(-50%,-50%);white-space:nowrap;pointer-events:none;}
+.cmd-av{font-size:64px;margin-bottom:14px;}
+.cmd-tl{font-size:9px;font-weight:700;letter-spacing:6px;color:var(--g);text-transform:uppercase;font-family:'Share Tech Mono';margin-bottom:8px;}
+.cmd-name{font-family:'Bebas Neue';font-size:54px;letter-spacing:6px;color:#fff;}
+.cmd-rank{font-size:11px;letter-spacing:4px;color:var(--g);text-transform:uppercase;margin-bottom:20px;}
+.cmd-quote{font-family:'Share Tech Mono';font-size:12px;color:rgba(255,255,255,0.3);line-height:1.9;max-width:480px;margin:0 auto 20px;}
+.cmd-id{font-family:'Share Tech Mono';font-size:9px;color:var(--b3);letter-spacing:3px;padding:5px 14px;border:1px solid var(--b2);display:inline-block;}
+
+/* ══ APPLY NOW SECTION ══ */
+#apply-sec{background:var(--s1);border-top:1px solid var(--b1);border-bottom:1px solid var(--b1);padding:80px 60px;}
+.apply-center{max-width:700px;margin:0 auto;text-align:center;}
+.apply-center .sec-div{margin:0 auto 32px;}
+.apply-big-btn{
+  font-family:'Bebas Neue';font-size:22px;letter-spacing:6px;
+  padding:18px 50px;background:#fff;color:#000;
+  border:none;cursor:pointer;transition:all .3s;
+  display:inline-block;position:relative;overflow:hidden;
+}
+.apply-big-btn::before{content:'';position:absolute;inset:0;background:#000;transform:translateY(100%);transition:transform .3s;}
+.apply-big-btn:hover::before{transform:translateY(0);}
+.apply-big-btn:hover{color:#fff;}
+.apply-big-btn span{position:relative;z-index:1;}
+.apply-note{font-size:10px;letter-spacing:3px;color:var(--g);margin-top:14px;font-family:'Share Tech Mono';}
+
+/* ══ FOOTER ══ */
+footer{background:var(--s1);border-top:1px solid var(--b1);padding:28px 60px;display:flex;align-items:center;justify-content:space-between;position:relative;z-index:2;}
+.foot-logo{font-family:'Bebas Neue';font-size:16px;letter-spacing:4px;color:var(--g);}
+.foot-text{font-size:9px;letter-spacing:2px;color:var(--b4);font-family:'Share Tech Mono';}
+.foot-links{display:flex;gap:18px;}
+.foot-link{font-size:9px;letter-spacing:2px;color:var(--g);cursor:pointer;transition:color .2s;text-decoration:none;}.foot-link:hover{color:#fff;}
+
+/* ══ APPLY FORM MODAL ══ */
+#apply-modal{position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,0.95);display:none;align-items:center;justify-content:center;padding:20px;}
+#apply-modal.open{display:flex;}
+.af-box{background:#080808;border:1px solid rgba(255,255,255,0.1);width:100%;max-width:520px;max-height:90vh;overflow-y:auto;}
+.af-head{padding:16px 20px;border-bottom:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:#080808;z-index:1;}
+.af-head h3{font-family:'Bebas Neue';font-size:18px;letter-spacing:3px;color:#fff;}
+.af-close{background:none;border:none;color:var(--g);font-size:18px;cursor:pointer;transition:color .2s;}.af-close:hover{color:#fff;}
+.af-body{padding:20px;}
+.af-intro{font-size:11px;color:var(--g);line-height:1.7;margin-bottom:20px;font-family:'Share Tech Mono';padding:10px;border:1px solid var(--b1);border-left:2px solid rgba(255,255,255,0.15);}
+.af-intro::before{content:'> ';color:var(--b3);}
+.afg{margin-bottom:12px;}
+.afl{display:block;font-size:8px;font-weight:700;letter-spacing:3px;color:var(--g);text-transform:uppercase;margin-bottom:4px;font-family:'Share Tech Mono';}
+.afi,.afs{width:100%;background:#000;border:1px solid rgba(255,255,255,0.08);color:#fff;padding:9px 11px;font-family:'Rajdhani';font-size:13px;font-weight:600;outline:none;transition:border-color .2s;}
+.afi:focus,.afs:focus{border-color:rgba(255,255,255,0.3);}
+.afs option{background:#000;}
+.afrow{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.af-oath{background:#000;border:1px solid rgba(255,255,255,0.06);padding:14px;margin:14px 0;font-size:10px;color:var(--g);line-height:1.8;font-family:'Share Tech Mono';}
+.af-oath-title{font-family:'Bebas Neue';font-size:13px;letter-spacing:2px;color:rgba(255,255,255,0.3);margin-bottom:8px;}
+.af-check{display:flex;align-items:flex-start;gap:10px;margin-top:14px;}
+.af-check input{margin-top:3px;flex-shrink:0;accent-color:#fff;}
+.af-check label{font-size:11px;color:var(--g);line-height:1.6;}
+.af-submit{width:100%;background:#fff;color:#000;font-family:'Rajdhani';font-size:12px;font-weight:700;letter-spacing:3px;text-transform:uppercase;padding:12px;border:none;cursor:pointer;transition:all .2s;margin-top:16px;}
+.af-submit:hover{background:#ddd;}
+.af-foot{padding:12px 20px;border-top:1px solid rgba(255,255,255,0.06);text-align:center;font-size:9px;color:var(--b3);letter-spacing:2px;font-family:'Share Tech Mono';}
+
+/* ══ FLOATING BUTTON ══ */
+#float-dash{
+  position:fixed;bottom:20px;right:18px;z-index:999;
+  background:#fff;color:#000;
+  font-family:'Rajdhani';font-size:10px;font-weight:700;
+  letter-spacing:2px;text-transform:uppercase;
+  padding:11px 18px;border:none;cursor:pointer;
+  box-shadow:0 4px 20px rgba(255,255,255,0.12);
+  transition:all .2s;
+}
+#float-dash:hover{background:#ddd;}
+
+/* ══ PASSWORD SCREEN ══ */
+#pass-overlay{position:fixed;inset:0;z-index:1999;background:rgba(0,0,0,0.98);display:none;align-items:center;justify-content:center;}
+#pass-overlay.open{display:flex;}
+.pass-box{background:#080808;border:1px solid rgba(255,255,255,0.1);padding:40px;width:320px;text-align:center;position:relative;}
+.pass-icon{font-size:40px;margin-bottom:14px;}
+.pass-title{font-family:'Bebas Neue';font-size:22px;letter-spacing:4px;color:#fff;margin-bottom:4px;}
+.pass-sub{font-size:9px;letter-spacing:3px;color:var(--g);font-family:'Share Tech Mono';margin-bottom:22px;}
+.pass-input{width:100%;background:#000;border:1px solid rgba(255,255,255,0.1);border-bottom:1px solid rgba(255,255,255,0.4);color:#fff;padding:12px 14px;font-family:'Share Tech Mono';font-size:16px;letter-spacing:4px;text-align:center;outline:none;margin-bottom:8px;}
+.pass-err{color:#ff4444;font-size:9px;letter-spacing:2px;font-family:'Share Tech Mono';margin-bottom:10px;display:none;}
+.pass-btn{width:100%;background:#fff;color:#000;font-family:'Rajdhani';font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;padding:11px;border:none;cursor:pointer;transition:all .2s;margin-top:6px;}
+.pass-btn:hover{background:#ddd;}
+
+/* ══ DASHBOARD ══ */
+#dash-overlay{position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,0.99);display:none;overflow:hidden;}
+#dash-overlay.open{display:flex;}
+#dash-sidebar{width:220px;flex-shrink:0;background:#050505;border-right:1px solid rgba(255,255,255,0.06);display:flex;flex-direction:column;}
+.ds-head{padding:14px 12px;border-bottom:1px solid rgba(255,255,255,0.05);display:flex;align-items:center;justify-content:space-between;}
+.ds-brand{font-family:'Bebas Neue';font-size:14px;letter-spacing:3px;color:#fff;}
+.ds-close{background:none;border:none;color:var(--g);font-size:16px;cursor:pointer;transition:color .2s;}.ds-close:hover{color:#fff;}
+.king-pill{margin:10px;padding:10px 12px;background:#0a0a0a;border:1px solid rgba(255,255,255,0.08);border-left:2px solid rgba(255,255,255,0.3);}
+.kp-lbl{font-size:8px;letter-spacing:3px;color:var(--g);text-transform:uppercase;}
+.kp-name{font-family:'Bebas Neue';font-size:18px;color:#fff;letter-spacing:2px;}
+.kp-id{font-size:9px;color:var(--g);letter-spacing:2px;font-family:'Share Tech Mono';}
+.ds-nav{flex:1;overflow-y:auto;padding:6px 0;}
+.ds-sec{font-size:8px;font-weight:700;letter-spacing:4px;color:var(--g);text-transform:uppercase;padding:10px 14px 4px;font-family:'Share Tech Mono';}
+.di{display:flex;align-items:center;gap:9px;padding:8px 14px;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--g);cursor:pointer;border-left:2px solid transparent;transition:all .2s;}
+.di:hover{color:#fff;background:rgba(255,255,255,0.03);}
+.di.on{color:#fff;background:rgba(255,255,255,0.04);border-left-color:rgba(255,255,255,0.4);}
+.di-ic{font-size:13px;width:16px;text-align:center;}
+.dbadge{margin-left:auto;background:rgba(204,0,0,0.25);color:#ff8888;font-size:8px;font-weight:700;padding:1px 5px;letter-spacing:1px;}
+.dbadge-w{background:rgba(255,255,255,0.1);color:#fff;}
+.ds-foot{padding:8px 14px;border-top:1px solid rgba(255,255,255,0.04);font-size:8px;letter-spacing:2px;color:var(--dg);text-align:center;font-family:'Share Tech Mono';}
+
+/* DASH MAIN */
+#dash-main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+.dtb{height:46px;flex-shrink:0;background:#050505;border-bottom:1px solid rgba(255,255,255,0.05);display:flex;align-items:center;padding:0 18px;gap:10px;}
+.dtb-title{font-family:'Bebas Neue';font-size:18px;letter-spacing:3px;color:#fff;}
+.dtb-sub{font-size:9px;letter-spacing:2px;color:var(--g);text-transform:uppercase;font-family:'Share Tech Mono';}
+.dtb-right{margin-left:auto;display:flex;align-items:center;gap:10px;}
+.live-pill{display:flex;align-items:center;gap:5px;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,0.4);font-family:'Share Tech Mono';}
+.ldot{width:5px;height:5px;background:#fff;border-radius:50%;animation:blink2 2s infinite;opacity:.5;}
+@keyframes blink2{0%,100%{opacity:.5;}50%{opacity:.1;}}
+.dclock{font-size:11px;color:var(--g);font-family:'Share Tech Mono';}
+.dcontent{flex:1;overflow-y:auto;padding:14px 18px;}
+.dpage{display:none;}.dpage.active{display:block;}
+
+/* DASH STAT CARDS */
+.dsr{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px;}
+.dsc{background:#050505;border:1px solid rgba(255,255,255,0.06);padding:13px;position:relative;overflow:hidden;}
+.dsc::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:var(--dacc,rgba(255,255,255,0.2));}
+.dsc-ic{position:absolute;right:10px;top:10px;font-size:18px;opacity:.06;}
+.dsc-lbl{font-size:8px;font-weight:700;letter-spacing:3px;color:var(--g);text-transform:uppercase;margin-bottom:5px;font-family:'Share Tech Mono';}
+.dsc-val{font-family:'Bebas Neue';font-size:32px;color:#fff;line-height:1;}
+.dsc-sub{font-size:9px;color:var(--g);margin-top:3px;}
+
+/* DASH TABLE */
+.dtw{background:#050505;border:1px solid rgba(255,255,255,0.06);overflow:hidden;margin-bottom:14px;}
+.dtw table{width:100%;border-collapse:collapse;}
+.dtw thead tr{background:#0a0a0a;border-bottom:1px solid rgba(255,255,255,0.05);}
+.dtw th{padding:7px 10px;font-size:8px;font-weight:700;letter-spacing:3px;color:var(--g);text-transform:uppercase;text-align:left;font-family:'Share Tech Mono';}
+.dtw tbody tr{border-bottom:1px solid rgba(255,255,255,0.03);transition:background .15s;}
+.dtw tbody tr:hover{background:rgba(255,255,255,0.02);}
+.dtw tbody tr:last-child{border-bottom:none;}
+.dtw td{padding:8px 10px;font-size:12px;font-weight:600;}
+
+/* DASH BADGES */
+.drb{display:inline-flex;align-items:center;gap:3px;padding:2px 6px;font-size:8px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border:1px solid rgba(255,255,255,0.1);color:var(--lg);}
+.sdot2{width:5px;height:5px;border-radius:50%;display:inline-block;margin-right:3px;}
+.s-on{background:#fff;opacity:.8;}.s-wa{background:#f0a500;}.s-off{background:var(--red);}
+
+/* DASH FORM */
+.dg2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.dg3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.dbox{background:#050505;border:1px solid rgba(255,255,255,0.06);padding:14px;margin-bottom:12px;}
+.dst{font-family:'Bebas Neue';font-size:14px;letter-spacing:3px;color:rgba(255,255,255,0.6);margin-bottom:10px;}
+.dfg{margin-bottom:10px;}
+.dfl{display:block;font-size:8px;font-weight:700;letter-spacing:3px;color:var(--g);text-transform:uppercase;margin-bottom:4px;font-family:'Share Tech Mono';}
+.dfi,.dfs{width:100%;background:#000;border:1px solid rgba(255,255,255,0.08);color:#fff;padding:8px 10px;font-family:'Rajdhani';font-size:12px;font-weight:600;outline:none;transition:border-color .2s;}
+.dfi:focus,.dfs:focus{border-color:rgba(255,255,255,0.3);}
+.dfs option{background:#000;}
+.dfrow{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.dsh{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+
+/* DASH BUTTONS */
+.dbtn{font-family:'Rajdhani';font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:7px 13px;background:transparent;color:#fff;border:1px solid rgba(255,255,255,0.12);cursor:pointer;transition:all .2s;}
+.dbtn:hover{border-color:rgba(255,255,255,0.3);}
+.dbtn-w{background:#fff;color:#000;border-color:#fff;}.dbtn-w:hover{background:#ddd;}
+.dbtn-r{background:rgba(204,0,0,0.1);border-color:rgba(204,0,0,.2);color:#ff8888;}.dbtn-r:hover{background:rgba(204,0,0,0.2);}
+.dbtn-sm{padding:3px 8px;font-size:9px;}
+
+/* APPLICATION CARD */
+.app-card{background:#050505;border:1px solid rgba(255,255,255,0.08);border-left:2px solid rgba(255,255,255,0.2);padding:14px 18px;margin-bottom:8px;transition:all .2s;}
+.app-card:hover{background:#0a0a0a;}
+.app-card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.app-name{font-family:'Bebas Neue';font-size:18px;letter-spacing:2px;}
+.app-date{font-size:9px;color:var(--g);font-family:'Share Tech Mono';letter-spacing:2px;}
+.app-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px;}
+.app-field label{font-size:8px;letter-spacing:2px;color:var(--g);display:block;text-transform:uppercase;font-family:'Share Tech Mono';}
+.app-field span{font-size:12px;font-weight:600;color:#fff;}
+.app-motto-txt{font-size:11px;color:var(--g);font-style:italic;margin-bottom:10px;padding:8px;border:1px solid rgba(255,255,255,0.04);}
+.app-actions{display:flex;gap:8px;}
+.app-status{display:inline-block;font-size:8px;font-weight:700;letter-spacing:2px;padding:2px 8px;border:1px solid;}
+.app-pending{color:#f0a500;border-color:rgba(240,165,0,0.3);}
+.app-accepted{color:#4caf50;border-color:rgba(76,175,80,0.3);}
+.app-rejected{color:#cc0000;border-color:rgba(204,0,0,0.3);}
+
+/* FUND */
+.txni{display:flex;align-items:center;gap:10px;padding:8px 12px;border-bottom:1px solid rgba(255,255,255,0.03);background:#050505;}
+.txni:last-child{border-bottom:none;}
+.ti{font-size:15px;width:22px;text-align:center;}
+.tn{font-size:12px;font-weight:600;}
+.td2{font-size:9px;color:var(--g);font-family:'Share Tech Mono';}
+.ta{font-family:'Bebas Neue';font-size:18px;}
+.ta-in{color:#fff;}.ta-out{color:var(--red);}
+.bbar{margin-bottom:8px;}
+.bbl{display:flex;justify-content:space-between;font-size:10px;color:var(--g);margin-bottom:4px;font-family:'Share Tech Mono';}
+.bbbg{height:2px;background:var(--b2);}
+.bbf{height:2px;background:rgba(255,255,255,0.3);transition:width 1s;}
+
+/* VIOLATIONS */
+.rp2{display:inline-block;font-size:8px;font-weight:700;letter-spacing:2px;padding:2px 7px;background:rgba(204,0,0,0.1);color:#ff8888;border:1px solid rgba(204,0,0,0.2);}
+
+/* EVENTS DASH */
+.decard{background:#050505;border:1px solid rgba(255,255,255,0.06);border-top:1px solid rgba(255,255,255,0.15);padding:13px;margin-bottom:8px;transition:all .2s;position:relative;}
+.decard:hover{background:#080808;}
+.de-date{font-family:'Share Tech Mono';font-size:9px;color:var(--g);letter-spacing:2px;margin-bottom:4px;}
+.de-name{font-family:'Bebas Neue';font-size:18px;letter-spacing:2px;margin-bottom:4px;}
+.de-desc{font-size:11px;color:var(--g);line-height:1.6;margin-bottom:6px;}
+.de-meta{display:flex;gap:10px;font-size:10px;color:var(--g);}
+.de-del{position:absolute;top:10px;right:10px;background:none;border:none;color:rgba(204,0,0,.3);cursor:pointer;font-size:13px;transition:color .2s;}.de-del:hover{color:var(--red);}
+
+/* DASH MODAL */
+.dov{position:fixed;inset:0;background:rgba(0,0,0,0.96);z-index:3000;display:none;align-items:center;justify-content:center;}
+.dov.open{display:flex;}
+.dmodal{background:#080808;border:1px solid rgba(255,255,255,0.1);width:480px;max-height:88vh;overflow-y:auto;}
+.dmhd{padding:12px 16px;border-bottom:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:space-between;}
+.dmhd h3{font-family:'Bebas Neue';font-size:16px;letter-spacing:2px;color:#fff;}
+.dmcl{background:none;border:none;color:var(--g);font-size:16px;cursor:pointer;}.dmcl:hover{color:#fff;}
+.dmbd{padding:16px;}
+.dmft{padding:10px 16px;border-top:1px solid rgba(255,255,255,0.05);display:flex;gap:8px;justify-content:flex-end;}
+
+/* SITE EDIT */
+.site-update-note{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-left:2px solid rgba(255,255,255,0.2);padding:10px 14px;margin-bottom:14px;font-size:10px;color:var(--g);font-family:'Share Tech Mono';}
+
+/* NOTIFICATION */
+.notif{position:fixed;top:12px;right:12px;background:#080808;border:1px solid rgba(255,255,255,0.1);border-left:2px solid rgba(255,255,255,0.4);padding:9px 13px;font-size:11px;font-weight:600;letter-spacing:1px;z-index:9999;transform:translateX(130%);transition:transform .3s;font-family:'Share Tech Mono';color:#fff;}
+.notif.show{transform:translateX(0);}
+.notif.err{border-left-color:var(--red);color:#ff8888;}
+
+::-webkit-scrollbar{width:2px;}
+::-webkit-scrollbar-track{background:#000;}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1);}
+
+@media print{#float-dash,#nav,.scroll-ind{display:none!important;}}
+@media(max-width:768px){
+  .sw{padding:60px 20px;}
+  .about-grid,.rules-grid{grid-template-columns:1fr;}
+  .about-visual{display:none;}
+  #nav{padding:12px 16px;}
+  .nav-links{display:none;}
+  .nav-apply-btn{font-size:9px;padding:6px 10px;}
+  #dash-sidebar{width:190px;}
+  .dsr{grid-template-columns:1fr 1fr;}
+  .dg2,.dg3{grid-template-columns:1fr;}
+  .dfrow{grid-template-columns:1fr;}
+  .app-grid{grid-template-columns:1fr 1fr;}
+}
+</style>
+</head>
+<body>
+
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+<canvas id="anim-canvas"></canvas>
+<div class="noise"></div>
+<div class="notif" id="notif"></div>
+
+<!-- NAVBAR -->
+<nav id="nav">
+  <div class="nav-logo" onclick="scrollTo(0,0)">SHADOW<span>BORN</span></div>
+  <div class="nav-links">
+    <a class="nav-link" href="#about">About</a>
+    <a class="nav-link" href="#ranks">Ranks</a>
+    <a class="nav-link" href="#members-sec">Members</a>
+    <a class="nav-link" href="#rules-sec">Rules</a>
+    <a class="nav-link" href="#events-sec">Events</a>
+    <a class="nav-link" href="#commander">Leader</a>
+  </div>
+  <button class="nav-apply-btn" onclick="openApply()">Apply Now</button>
+</nav>
+
+<!-- FLOATING KING BUTTON -->
+<button id="float-dash" onclick="openDash()">👑 KING PANEL</button>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-line"></div>
+  <div class="hero-tag">[ SHADOWBORN BROTHERHOOD — EST. 2026 ]</div>
+  <h1 class="hero-title">
+    <div class="hero-glitch" data-text="SHADOW">SHADOW</div><br>
+    <span class="dim hero-glitch" data-text="BORN">BORN</span>
+  </h1>
+  <div class="hero-sub">Dark by Origin. United by Soul.</div>
+  <div class="hero-motto" id="hero-motto">Born from the shadows, living in unity.</div>
+  <div class="hero-btns">
+    <a class="hbtn hbtn-p" href="#about">Explore</a>
+    <a class="hbtn hbtn-s" href="#members-sec">Members</a>
+    <button class="hbtn hbtn-apply" onclick="openApply()">Apply Now →</button>
+  </div>
+  <div class="hero-stats">
+    <div class="hstat"><div class="hstat-n" id="stat-members">0</div><div class="hstat-l">Members</div></div>
+    <div class="hstat"><div class="hstat-n">5</div><div class="hstat-l">Ranks</div></div>
+    <div class="hstat"><div class="hstat-n" id="stat-events">0</div><div class="hstat-l">Events</div></div>
+    <div class="hstat"><div class="hstat-n">6</div><div class="hstat-l">Rules</div></div>
+  </div>
+  <div class="scroll-ind"><div class="scroll-line"></div><span>SCROLL</span></div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+<div class="sw">
+  <div class="about-grid">
+    <div class="about-text">
+      <div class="sec-tag">// ABOUT</div>
+      <div class="sec-title" id="about-title">WHAT IS<br>SHADOWBORN</div>
+      <div class="sec-div"></div>
+      <p id="about-p1">ShadowBorn sirf ek gang nahi — yeh ek <b>movement</b> hai. Ek family hai. Un logon ke liye jo akele feel karte hain, system se thak gaye hain, aur chahte hain ki koi unke saath khada rahe.</p>
+      <p id="about-p2">Hum <b id="about-count">25+</b> logon ki ek brotherhood hain — jo ek doosre ke liye jeete hain, saath enjoy karte hain, aur zindagi ko ek team ki tarah face karte hain. Koi judgment nahi.</p>
+      <div class="pillars">
+        <div class="pillar"><div class="pillar-ic">🤝</div><div class="pillar-t">Loyalty</div><div class="pillar-d">Hamesha ek doosre ke saath</div></div>
+        <div class="pillar"><div class="pillar-ic">💪</div><div class="pillar-t">Unity</div><div class="pillar-d">Saath milke aage badhna</div></div>
+        <div class="pillar"><div class="pillar-ic">🔥</div><div class="pillar-t">Passion</div><div class="pillar-d">Har kaam mein dedication</div></div>
+        <div class="pillar"><div class="pillar-ic">☠</div><div class="pillar-t">Respect</div><div class="pillar-d">Har member ko izzat</div></div>
+      </div>
+    </div>
+    <div class="about-visual">
+      <div class="av-ring1"><div class="av-dot"></div></div>
+      <div class="av-ring2"></div>
+      <div class="av-box">☠</div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- RANKS -->
+<section id="ranks">
+<div class="sw">
+  <div class="sec-tag">// HIERARCHY</div>
+  <div class="sec-title">RANK SYSTEM</div>
+  <div class="sec-div"></div>
+  <div class="ranks-grid" id="ranks-list"></div>
+</div>
+</section>
+
+<!-- MEMBERS -->
+<section id="members-sec">
+<div class="sw">
+  <div class="sec-tag">// BROTHERHOOD</div>
+  <div class="sec-title">OUR MEMBERS</div>
+  <div class="sec-div"></div>
+  <div class="members-grid" id="members-list"></div>
+</div>
+</section>
+
+<!-- RULES -->
+<section id="rules-sec">
+<div class="sw">
+  <div class="sec-tag">// CODE</div>
+  <div class="sec-title">BROTHERHOOD<br>RULES</div>
+  <div class="sec-div"></div>
+  <div class="rules-grid" id="rules-list"></div>
+</div>
+</section>
+
+<!-- EVENTS -->
+<section id="events-sec">
+<div class="sw">
+  <div class="sec-tag">// EVENTS</div>
+  <div class="sec-title">UPCOMING</div>
+  <div class="sec-div"></div>
+  <div class="events-grid" id="events-list"></div>
+</div>
+</section>
+
+<!-- COMMANDER -->
+<section id="commander">
+<div class="cmd-wrap">
+  <div class="sec-tag" style="text-align:center">// SHADOW KING</div>
+  <div class="cmd-box">
+    <div class="cmd-av">⚔</div>
+    <div class="cmd-tl">Shadow King of ShadowBorn</div>
+    <div class="cmd-name" id="cmd-name">SAHIL</div>
+    <div class="cmd-rank" id="cmd-rank">👑 Supreme Leader · SB-001</div>
+    <div class="cmd-quote" id="cmd-quote">"Rules are my weapon. Brotherhood is my strength. ShadowBorn is my life."</div>
+    <div class="cmd-id" id="cmd-id">ID: SB-001 · EST. 2026 · SHADOWBORN</div>
+  </div>
+</div>
+</section>
+
+<!-- APPLY NOW -->
+<section id="apply-sec">
+<div class="apply-center sw">
+  <div class="sec-tag" style="text-align:center">// JOIN US</div>
+  <div class="sec-title" style="text-align:center">APPLY NOW</div>
+  <div class="sec-div"></div>
+  <p class="sec-desc" style="text-align:center;margin:0 auto 30px">ShadowBorn invite-only brotherhood hai. Agar tum truly loyal ho aur brotherhood ka hissa banna chahte ho — apply karo. Shadow King review karega.</p>
+  <button class="apply-big-btn" onclick="openApply()"><span>SUBMIT YOUR APPLICATION →</span></button>
+  <div class="apply-note">> Invite only · Shadow King review karega · Decision final hoga</div>
+</div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="foot-logo">SHADOWBORN</div>
+  <div class="foot-text">© 2026 · BORN FROM THE SHADOWS</div>
+  <div class="foot-links">
+    <a class="foot-link" href="#hero">Top</a>
+    <a class="foot-link" href="#about">About</a>
+    <a class="foot-link" href="#apply-sec">Apply</a>
+  </div>
+</footer>
+
+<!-- APPLY FORM MODAL -->
+<div id="apply-modal">
+<div class="af-box">
+  <div class="af-head">
+    <h3>☠ SHADOWBORN APPLICATION</h3>
+    <button class="af-close" onclick="closeApply()">✕</button>
+  </div>
+  <div class="af-body">
+    <div class="af-intro">ShadowBorn mein apply karne se pehle samajh lo — yeh sirf ek group nahi, ek brotherhood hai. Loyalty, respect aur commitment mandatory hai.</div>
+    <div class="afrow">
+      <div class="afg"><label class="afl">Full Name *</label><input type="text" class="afi" id="af-name" placeholder="Rahul Sharma"/></div>
+      <div class="afg"><label class="afl">Nickname *</label><input type="text" class="afi" id="af-nick" placeholder="The Ghost"/></div>
+    </div>
+    <div class="afrow">
+      <div class="afg"><label class="afl">Date of Birth *</label><input type="date" class="afi" id="af-dob"/></div>
+      <div class="afg"><label class="afl">City *</label><input type="text" class="afi" id="af-city" placeholder="Mumbai"/></div>
+    </div>
+    <div class="afrow">
+      <div class="afg"><label class="afl">Phone Number</label><input type="tel" class="afi" id="af-phone" placeholder="9876543210"/></div>
+      <div class="afg"><label class="afl">Instagram ID</label><input type="text" class="afi" id="af-ig" placeholder="@username"/></div>
+    </div>
+    <div class="afg"><label class="afl">Referred By (optional)</label><input type="text" class="afi" id="af-ref" placeholder="Kisi member ka naam..."/></div>
+    <div class="afg"><label class="afl">Why do you want to join ShadowBorn? *</label><input type="text" class="afi" id="af-why" placeholder="Apni wajah batao..."/></div>
+    <div class="afg"><label class="afl">Your Personal Motto</label><input type="text" class="afi" id="af-motto" placeholder="Darkness is my strength..."/></div>
+    <div class="af-oath">
+      <div class="af-oath-title">THE DARK OATH</div>
+      Main samajhta hoon ki ShadowBorn join karna ek brotherhood ka hissa banna hai. Koi ego nahi, koi nafrat nahi, koi dhoka nahi. Main wada karta hoon ki loyal rahunga, respect dunga, aur gang ke code ke khilaf kabhi nahi jaunga.
+    </div>
+    <div class="af-check">
+      <input type="checkbox" id="af-oath-check"/>
+      <label for="af-oath-check">Main Dark Oath ko accept karta hoon aur ShadowBorn ke rules follow karne ka wada karta hoon.</label>
+    </div>
+    <button class="af-submit" onclick="submitApplication()">SUBMIT APPLICATION</button>
+  </div>
+  <div class="af-foot">> Application Shadow King ke paas jayegi · Decision unka final hoga</div>
+</div>
+</div>
+
+<!-- PASSWORD SCREEN -->
+<div id="pass-overlay">
+  <div class="pass-box">
+    <div class="pass-icon">👑</div>
+    <div class="pass-title">KING ACCESS</div>
+    <div class="pass-sub">> ENTER PASSWORD TO CONTINUE_</div>
+    <input type="password" class="pass-input" id="pass-input" placeholder="••••••••••••" onkeydown="if(event.key==='Enter')checkPass()"/>
+    <div class="pass-err" id="pass-err">⚠ WRONG PASSWORD — ACCESS DENIED</div>
+    <button class="pass-btn" onclick="checkPass()">UNLOCK DASHBOARD</button>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dash-overlay">
+<div id="dash-sidebar">
+  <div class="ds-head">
+    <div class="ds-brand">☠ DASHBOARD</div>
+    <button class="ds-close" onclick="closeDash()">✕</button>
+  </div>
+  <div class="king-pill">
+    <div class="kp-lbl">Shadow King</div>
+    <div class="kp-name" id="kp-name">SAHIL</div>
+    <div class="kp-id">SB-001 · Full Access</div>
+  </div>
+  <nav class="ds-nav">
+    <div class="ds-sec">// MAIN</div>
+    <div class="di on" onclick="dgo('ov',this)"><span class="di-ic">⚡</span>Overview</div>
+    <div class="ds-sec">// APPLICATIONS</div>
+    <div class="di" onclick="dgo('apps',this)"><span class="di-ic">📋</span>Applications<span class="dbadge dbadge-w" id="dapb">0</span></div>
+    <div class="ds-sec">// CONTROL</div>
+    <div class="di" onclick="dgo('members',this)"><span class="di-ic">👥</span>Members<span class="dbadge" id="dmb">0</span></div>
+    <div class="di" onclick="dgo('ranks',this)"><span class="di-ic">👑</span>Ranks</div>
+    <div class="di" onclick="dgo('fund',this)"><span class="di-ic">💰</span>Fund</div>
+    <div class="di" onclick="dgo('events',this)"><span class="di-ic">🔥</span>Events<span class="dbadge" id="deb">0</span></div>
+    <div class="ds-sec">// SITE</div>
+    <div class="di" onclick="dgo('editsite',this)"><span class="di-ic">✏</span>Edit Website</div>
+    <div class="ds-sec">// DISCIPLINE</div>
+    <div class="di" onclick="dgo('viols',this)"><span class="di-ic">⚠</span>Violations<span class="dbadge" id="dvb">0</span></div>
+  </nav>
+  <div class="ds-foot">KING ONLY · CONFIDENTIAL</div>
+</div>
+
+<div id="dash-main">
+  <div class="dtb">
+    <div><div class="dtb-title" id="dptitle">OVERVIEW</div><div class="dtb-sub" id="dpsub">Command Center</div></div>
+    <div class="dtb-right">
+      <div class="live-pill"><div class="ldot"></div>LIVE</div>
+      <div class="dclock" id="dclock">--:--</div>
+    </div>
+  </div>
+  <div class="dcontent">
+
+  <!-- OV -->
+  <div class="dpage active" id="dp-ov">
+    <div class="dsr">
+      <div class="dsc" style="--dacc:rgba(255,255,255,0.3)"><div class="dsc-ic">👥</div><div class="dsc-lbl">Members</div><div class="dsc-val" id="dov-m">0</div></div>
+      <div class="dsc" style="--dacc:rgba(255,255,255,0.2)"><div class="dsc-ic">📋</div><div class="dsc-lbl">Applications</div><div class="dsc-val" id="dov-ap">0</div></div>
+      <div class="dsc" style="--dacc:rgba(255,255,255,0.15)"><div class="dsc-ic">💰</div><div class="dsc-lbl">Fund</div><div class="dsc-val" id="dov-f">₹0</div></div>
+      <div class="dsc" style="--dacc:rgba(204,0,0,0.5)"><div class="dsc-ic">⚠</div><div class="dsc-lbl">Violations</div><div class="dsc-val" id="dov-v">0</div></div>
+    </div>
+    <div class="dg2">
+      <div>
+        <div class="dsh"><div class="dst">Recent Members</div></div>
+        <div class="dtw"><table><thead><tr><th>Name</th><th>Rank</th><th>Status</th></tr></thead><tbody id="dov-mt"></tbody></table></div>
+      </div>
+      <div>
+        <div class="dsh"><div class="dst">Quick Actions</div></div>
+        <div class="dbox" style="display:flex;flex-direction:column;gap:8px">
+          <button class="dbtn dbtn-w" onclick="dgo('apps',document.querySelectorAll('.di')[1])">📋 View Applications</button>
+          <button class="dbtn dbtn-w" onclick="dgo('members',document.querySelectorAll('.di')[3]);openDM('addM')">+ Add Member</button>
+          <button class="dbtn dbtn-w" onclick="dgo('events',document.querySelectorAll('.di')[6]);openDM('addEv')">+ Create Event</button>
+          <button class="dbtn" onclick="dgo('editsite',document.querySelectorAll('.di')[8])">✏ Edit Website</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- APPLICATIONS -->
+  <div class="dpage" id="dp-apps">
+    <div class="dsh">
+      <div class="dst">Member Applications</div>
+      <div style="font-size:9px;color:var(--g);font-family:'Share Tech Mono'">Total: <span id="app-total">0</span></div>
+    </div>
+    <div id="apps-list"><div style="text-align:center;padding:40px;color:var(--g);font-family:'Share Tech Mono';font-size:10px">No applications yet</div></div>
+  </div>
+
+  <!-- MEMBERS -->
+  <div class="dpage" id="dp-members">
+    <div class="dsh">
+      <div class="dst">All Members</div>
+      <div style="display:flex;gap:8px">
+        <input class="dfi" style="width:130px;padding:5px 8px" placeholder="Search..." oninput="dsM(this.value)"/>
+        <button class="dbtn dbtn-w" onclick="openDM('addM')">+ Add</button>
+      </div>
+    </div>
+    <div class="dtw">
+      <table><thead><tr><th>ID</th><th>Name</th><th>Nick</th><th>Rank</th><th>City</th><th>Status</th><th>Strikes</th><th>Actions</th></tr></thead>
+      <tbody id="dmt"></tbody></table>
+    </div>
+  </div>
+
+  <!-- RANKS -->
+  <div class="dpage" id="dp-ranks">
+    <div class="dsh"><div class="dst">Rank Structure</div></div>
+    <div id="drk-list"></div>
+  </div>
+
+  <!-- FUND -->
+  <div class="dpage" id="dp-fund">
+    <div class="dg3" style="margin-bottom:14px">
+      <div class="dsc" style="--dacc:rgba(255,255,255,0.2)"><div class="dsc-lbl">Collected</div><div class="dsc-val" id="df-in">₹0</div></div>
+      <div class="dsc" style="--dacc:rgba(204,0,0,0.3)"><div class="dsc-lbl">Spent</div><div class="dsc-val" id="df-out">₹0</div></div>
+      <div class="dsc" style="--dacc:rgba(255,255,255,0.3)"><div class="dsc-lbl">Balance</div><div class="dsc-val" id="df-bal">₹0</div></div>
+    </div>
+    <div class="dg2">
+      <div>
+        <div class="dsh"><div class="dst">Add Transaction</div></div>
+        <div class="dbox">
+          <div class="dfrow"><div class="dfg"><label class="dfl">Type</label><select class="dfs" id="tx-t"><option value="in">💰 In</option><option value="out">📤 Out</option></select></div><div class="dfg"><label class="dfl">Amount ₹</label><input type="number" class="dfi" id="tx-a" placeholder="500"/></div></div>
+          <div class="dfg"><label class="dfl">Description</label><input type="text" class="dfi" id="tx-d" placeholder="Monthly — Rahul"/></div>
+          <button class="dbtn dbtn-w" style="width:100%" onclick="addTxn()">Add</button>
+        </div>
+        <div class="dsh"><div class="dst">Breakdown</div></div>
+        <div class="dbox" id="df-break"></div>
+      </div>
+      <div>
+        <div class="dsh"><div class="dst">History</div></div>
+        <div id="dtx-list"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EVENTS -->
+  <div class="dpage" id="dp-events">
+    <div class="dsh"><div class="dst">Events</div><button class="dbtn dbtn-w" onclick="openDM('addEv')">+ New</button></div>
+    <div id="dev-list"></div>
+  </div>
+
+  <!-- EDIT SITE -->
+  <div class="dpage" id="dp-editsite">
+    <div class="dsh"><div class="dst">Edit Website Content</div></div>
+    <div class="site-update-note">> Jo bhi yahan change karoge — website pe instantly live ho jayega.</div>
+    <div class="dg2">
+      <div>
+        <div class="dbox">
+          <div class="dst" style="margin-bottom:10px">Hero Section</div>
+          <div class="dfg"><label class="dfl">Tagline</label><input class="dfi" id="e-sub" placeholder="Dark by Origin..."/></div>
+          <div class="dfg"><label class="dfl">Motto</label><input class="dfi" id="e-motto" placeholder="Born from the shadows..."/></div>
+          <button class="dbtn dbtn-w" style="width:100%" onclick="updateHero()">Update Hero</button>
+        </div>
+        <div class="dbox">
+          <div class="dst" style="margin-bottom:10px">About Section</div>
+          <div class="dfg"><label class="dfl">Line 1</label><input class="dfi" id="e-ab1"/></div>
+          <div class="dfg"><label class="dfl">Line 2</label><input class="dfi" id="e-ab2"/></div>
+          <button class="dbtn dbtn-w" style="width:100%" onclick="updateAbout()">Update About</button>
+        </div>
+      </div>
+      <div>
+        <div class="dbox">
+          <div class="dst" style="margin-bottom:10px">Leader Info</div>
+          <div class="dfg"><label class="dfl">Leader Name</label><input class="dfi" id="e-lname" placeholder="Sahil"/></div>
+          <div class="dfg"><label class="dfl">Leader Quote</label><input class="dfi" id="e-lquote" placeholder="Rules are my weapon..."/></div>
+          <div class="dfg"><label class="dfl">Leader ID</label><input class="dfi" id="e-lid" placeholder="SB-001 · EST. 2026..."/></div>
+          <button class="dbtn dbtn-w" style="width:100%" onclick="updateLeader()">Update Leader</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- VIOLATIONS -->
+  <div class="dpage" id="dp-viols">
+    <div class="dsh"><div class="dst">Violations Log</div><button class="dbtn dbtn-r" onclick="openDM('addViol')">+ Log</button></div>
+    <div class="dtw"><table><thead><tr><th>Member</th><th>Type</th><th>Action</th><th>Date</th><th>Del</th></tr></thead><tbody id="dvt"></tbody></table></div>
+  </div>
+
+  </div>
+</div>
+</div>
+
+<!-- DASH MODALS -->
+<div class="dov" id="dm-addM">
+<div class="dmodal">
+  <div class="dmhd"><h3>ADD MEMBER</h3><button class="dmcl" onclick="closeDM('addM')">✕</button></div>
+  <div class="dmbd">
+    <div class="dfrow"><div class="dfg"><label class="dfl">Name *</label><input class="dfi" id="an" placeholder="Rahul"/></div><div class="dfg"><label class="dfl">Nickname</label><input class="dfi" id="ank" placeholder="The Ghost"/></div></div>
+    <div class="dfrow"><div class="dfg"><label class="dfl">Rank</label><select class="dfs" id="ar"><option value="faded">🌘 Faded</option><option value="guardian">🌘 Guardian</option><option value="connector">🔥 Connector</option><option value="architect">🐺 Architect</option><option value="enforcer">⚔ Enforcer</option></select></div><div class="dfg"><label class="dfl">City</label><input class="dfi" id="ac" placeholder="Mumbai"/></div></div>
+    <div class="dfrow"><div class="dfg"><label class="dfl">Phone</label><input class="dfi" id="aph" placeholder="9876543210"/></div><div class="dfg"><label class="dfl">Instagram</label><input class="dfi" id="aig" placeholder="@username"/></div></div>
+    <div class="dfrow"><div class="dfg"><label class="dfl">Invited By</label><input class="dfi" id="ain" placeholder="Sahil"/></div><div class="dfg"><label class="dfl">Avatar Emoji</label><input class="dfi" id="aav" placeholder="👤" maxlength="4"/></div></div>
+    <div class="dfg"><label class="dfl">Motto</label><input class="dfi" id="amo" placeholder="ShadowBorn forever..."/></div>
+  </div>
+  <div class="dmft"><button class="dbtn" onclick="closeDM('addM')">Cancel</button><button class="dbtn dbtn-w" onclick="addMember()">Add Member</button></div>
+</div></div>
+
+<div class="dov" id="dm-editM">
+<div class="dmodal">
+  <div class="dmhd"><h3>EDIT MEMBER</h3><button class="dmcl" onclick="closeDM('editM')">✕</button></div>
+  <div class="dmbd">
+    <div class="dfrow"><div class="dfg"><label class="dfl">Name</label><input class="dfi" id="en"/></div><div class="dfg"><label class="dfl">Nickname</label><input class="dfi" id="enk"/></div></div>
+    <div class="dfrow"><div class="dfg"><label class="dfl">Rank</label><select class="dfs" id="er"><option value="faded">Faded</option><option value="guardian">Guardian</option><option value="connector">Connector</option><option value="architect">Architect</option><option value="enforcer">Enforcer</option><option value="king">King</option></select></div><div class="dfg"><label class="dfl">Status</label><select class="dfs" id="es"><option value="active">Active</option><option value="warning">Warning</option><option value="banned">Banned</option></select></div></div>
+    <div class="dfrow"><div class="dfg"><label class="dfl">City</label><input class="dfi" id="eci"/></div><div class="dfg"><label class="dfl">Strikes</label><input type="number" min="0" max="3" class="dfi" id="estr"/></div></div>
+    <div class="dfg"><label class="dfl">Motto</label><input class="dfi" id="emo"/></div>
+    <input type="hidden" id="eid"/>
+  </div>
+  <div class="dmft"><button class="dbtn" onclick="closeDM('editM')">Cancel</button><button class="dbtn dbtn-w" onclick="saveEdit()">Save</button></div>
+</div></div>
+
+<div class="dov" id="dm-addEv">
+<div class="dmodal">
+  <div class="dmhd"><h3>CREATE EVENT</h3><button class="dmcl" onclick="closeDM('addEv')">✕</button></div>
+  <div class="dmbd">
+    <div class="dfg"><label class="dfl">Event Name *</label><input class="dfi" id="evn" placeholder="Night Ride 2026"/></div>
+    <div class="dfrow"><div class="dfg"><label class="dfl">Date</label><input type="date" class="dfi" id="evd"/></div><div class="dfg"><label class="dfl">Time</label><input type="time" class="dfi" id="evt2"/></div></div>
+    <div class="dfg"><label class="dfl">Location</label><input class="dfi" id="evl" placeholder="Marine Drive, Mumbai"/></div>
+    <div class="dfg"><label class="dfl">Description</label><input class="dfi" id="evdesc" placeholder="Event ke baare mein..."/></div>
+    <div class="dfrow"><div class="dfg"><label class="dfl">Members</label><input type="number" class="dfi" id="evm" placeholder="20"/></div><div class="dfg"><label class="dfl">Budget ₹</label><input type="number" class="dfi" id="evb" placeholder="1000"/></div></div>
+  </div>
+  <div class="dmft"><button class="dbtn" onclick="closeDM('addEv')">Cancel</button><button class="dbtn dbtn-w" onclick="addEvent()">Create</button></div>
+</div></div>
+
+<div class="dov" id="dm-addViol">
+<div class="dmodal">
+  <div class="dmhd"><h3>LOG VIOLATION</h3><button class="dmcl" onclick="closeDM('addViol')">✕</button></div>
+  <div class="dmbd">
+    <div class="dfg"><label class="dfl">Member</label><select class="dfs" id="vm"></select></div>
+    <div class="dfg"><label class="dfl">Type</label><select class="dfs" id="vt2"><option>Loyalty/Betrayal</option><option>Disrespect/Ego</option><option>Public Drama</option><option>Social Media</option><option>Rule Break</option><option>Other</option></select></div>
+    <div class="dfg"><label class="dfl">Details</label><input class="dfi" id="vdet" placeholder="Kya hua..."/></div>
+    <div class="dfg"><label class="dfl">Action</label><select class="dfs" id="vact"><option>Warning</option><option>Strike 1</option><option>Strike 2</option><option>Permanent Ban</option></select></div>
+  </div>
+  <div class="dmft"><button class="dbtn" onclick="closeDM('addViol')">Cancel</button><button class="dbtn dbtn-r" onclick="addViol()">Log</button></div>
+</div></div>
+
+<script>
+// ══════════════════════════════
+// UNIQUE ANIMATION — Floating Geometric Shards
+// ══════════════════════════════
+(function(){
+  const c=document.getElementById('anim-canvas');
+  const ctx=c.getContext('2d');
+  function resize(){c.width=window.innerWidth;c.height=window.innerHeight;}
+  resize();window.addEventListener('resize',resize);
+
+  const shards=[];
+  for(let i=0;i<60;i++){
+    shards.push({
+      x:Math.random()*window.innerWidth,
+      y:Math.random()*window.innerHeight,
+      size:Math.random()*3+1,
+      vx:(Math.random()-.5)*.3,
+      vy:(Math.random()-.5)*.3,
+      opacity:Math.random()*.4+.05,
+      type:Math.floor(Math.random()*3),
+      rot:Math.random()*Math.PI*2,
+      rotSpeed:(Math.random()-.5)*.01,
+    });
+  }
+
+  function drawShard(s){
+    ctx.save();
+    ctx.translate(s.x,s.y);
+    ctx.rotate(s.rot);
+    ctx.globalAlpha=s.opacity;
+    ctx.strokeStyle='#ffffff';
+    ctx.lineWidth=.5;
+    ctx.beginPath();
+    if(s.type===0){
+      ctx.moveTo(0,-s.size*3);ctx.lineTo(s.size*2,s.size*2);ctx.lineTo(-s.size*2,s.size*2);ctx.closePath();
+    } else if(s.type===1){
+      ctx.rect(-s.size,-s.size,s.size*2,s.size*2);
+    } else {
+      for(let i=0;i<5;i++){
+        const a=i/5*Math.PI*2-Math.PI/2;
+        const r=i%2===0?s.size*2:s.size;
+        i===0?ctx.moveTo(Math.cos(a)*r,Math.sin(a)*r):ctx.lineTo(Math.cos(a)*r,Math.sin(a)*r);
+      }ctx.closePath();
+    }
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  // Connection lines between nearby particles
+  function drawConnections(){
+    for(let i=0;i<shards.length;i++){
+      for(let j=i+1;j<shards.length;j++){
+        const dx=shards[i].x-shards[j].x;
+        const dy=shards[i].y-shards[j].y;
+        const dist=Math.sqrt(dx*dx+dy*dy);
+        if(dist<120){
+          ctx.beginPath();
+          ctx.globalAlpha=(1-dist/120)*0.06;
+          ctx.strokeStyle='#ffffff';
+          ctx.lineWidth=.3;
+          ctx.moveTo(shards[i].x,shards[i].y);
+          ctx.lineTo(shards[j].x,shards[j].y);
+          ctx.stroke();
+        }
+      }
+    }
+  }
+
+  function tick(){
+    ctx.clearRect(0,0,c.width,c.height);
+    ctx.fillStyle='rgba(0,0,0,0.04)';
+    ctx.fillRect(0,0,c.width,c.height);
+    drawConnections();
+    shards.forEach(s=>{
+      s.x+=s.vx;s.y+=s.vy;s.rot+=s.rotSpeed;
+      if(s.x<-50)s.x=c.width+50;
+      if(s.x>c.width+50)s.x=-50;
+      if(s.y<-50)s.y=c.height+50;
+      if(s.y>c.height+50)s.y=-50;
+      drawShard(s);
+    });
+    requestAnimationFrame(tick);
+  }
+  tick();
+})();
+
+// ══════════════════════════════
+// CURSOR
+// ══════════════════════════════
+const cur=document.getElementById('cursor');
+const curR=document.getElementById('cursor-ring');
+document.addEventListener('mousemove',e=>{
+  cur.style.left=e.clientX+'px';cur.style.top=e.clientY+'px';
+  setTimeout(()=>{curR.style.left=e.clientX+'px';curR.style.top=e.clientY+'px';},80);
+});
+document.addEventListener('mousedown',()=>cur.style.transform='translate(-50%,-50%) scale(2)');
+document.addEventListener('mouseup',()=>cur.style.transform='translate(-50%,-50%) scale(1)');
+window.addEventListener('scroll',()=>document.getElementById('nav').classList.toggle('scrolled',scrollY>50));
+
+// ══════════════════════════════
+// DATA
+// ══════════════════════════════
+let D={
+  members:[
+    {id:'SB-001',name:'Sahil',nick:'The Blade',rank:'king',city:'Mumbai',phone:'9876543210',ig:'@sahil_sb',inv:'Founder',motto:'Rules are my weapon. Brotherhood is my strength.',joined:'Jan 2026',status:'active',strikes:0,av:'⚔'},
+    {id:'SB-002',name:'Davil',nick:'Shadow Eye',rank:'enforcer',city:'Delhi',phone:'9999999999',ig:'@davil_sb',inv:'Sahil',motto:'Born from shadows.',joined:'Jan 2026',status:'active',strikes:0,av:'👁'},
+    {id:'SB-101',name:'Arjun',nick:'The Wolf',rank:'architect',city:'Pune',phone:'9123456789',ig:'@arjun_wolf',inv:'Sahil',motto:'Create or be forgotten.',joined:'Feb 2026',status:'active',strikes:0,av:'🐺'},
+    {id:'SB-201',name:'Karan',nick:'Smoke',rank:'connector',city:'Jaipur',phone:'9012345678',ig:'@karan_sm',inv:'Davil',motto:'Together we rise.',joined:'Feb 2026',status:'active',strikes:1,av:'🔥'},
+    {id:'SB-301',name:'Rohan',nick:'Rookie',rank:'guardian',city:'Bangalore',phone:'8901234567',ig:'@rohan_rk',inv:'Arjun',motto:'I will prove myself.',joined:'Mar 2026',status:'active',strikes:0,av:'🌘'},
+    {id:'SB-302',name:'Nikhil',nick:'Phantom',rank:'faded',city:'Chennai',phone:'8800112233',ig:'@nikhil_ph',inv:'Karan',motto:'Darkness guides me.',joined:'Mar 2026',status:'warning',strikes:1,av:'👤'},
+  ],
+  txns:[
+    {type:'in',desc:'Monthly — Sahil',amt:200,date:'Mar 2026'},
+    {type:'in',desc:'Monthly — Arjun',amt:200,date:'Mar 2026'},
+    {type:'out',desc:'T-shirt print × 5',amt:600,date:'Feb 2026'},
+    {type:'in',desc:'Joining fee — Nikhil',amt:200,date:'Mar 2026'},
+    {type:'out',desc:'Event: Ground booking',amt:500,date:'Jan 2026'},
+  ],
+  events:[
+    {name:'NIGHT RIDE',date:'Mar 20, 2026',time:'9:00 PM',loc:'Marine Drive, Mumbai',desc:'Gang ki night ride — bikes aur brotherhood.',members:18,budget:800,status:'upcoming'},
+    {name:'SHADOWBORN DAY',date:'Mar 26, 2026',time:'6:00 PM',loc:'Lodhi Garden, Delhi',desc:'Anniversary celebration.',members:25,budget:1500,status:'upcoming'},
+    {name:'CONTENT SHOOT',date:'Apr 5, 2026',time:'2:00 PM',loc:'Bandra, Mumbai',desc:'Official reels aur photos.',members:12,budget:500,status:'planned'},
+  ],
+  viols:[],
+  applications:[],
+  site:{
+    heroMotto:'Born from the shadows, living in unity.',
+    ab1:'ShadowBorn sirf ek gang nahi — yeh ek <b>movement</b> hai. Ek family hai. Un logon ke liye jo akele feel karte hain aur chahte hain ki koi unke saath khada rahe.',
+    ab2:'Hum <b id="about-count">25+</b> logon ki ek brotherhood hain — jo ek doosre ke liye jeete hain, saath enjoy karte hain, aur zindagi ko ek team ki tarah face karte hain.',
+    leaderName:'Sahil',
+    leaderQuote:'"Rules are my weapon. Brotherhood is my strength. ShadowBorn is my life."',
+    leaderId:'SB-001 · EST. 2026 · SHADOWBORN',
+  }
+};
+
+const RNK={
+  king:      {l:'👑 Shadow King', o:1},
+  enforcer:  {l:'⚔ Enforcer',    o:2},
+  architect: {l:'🐺 Architect',  o:3},
+  connector: {l:'🔥 Connector',  o:4},
+  guardian:  {l:'🌘 Guardian',   o:5},
+  faded:     {l:'🌘 Faded',      o:6},
+  fallen:    {l:'💀 Fallen',     o:7},
+};
+const DPI={
+  ov:{t:'OVERVIEW',s:'Command Center'},
+  apps:{t:'APPLICATIONS',s:'Member Requests'},
+  members:{t:'MEMBERS',s:'Member Management'},
+  ranks:{t:'RANKS',s:'Brotherhood Hierarchy'},
+  fund:{t:'FUND',s:'Treasury'},
+  events:{t:'EVENTS',s:'Meetups'},
+  editsite:{t:'EDIT WEBSITE',s:'Live Site Control'},
+  viols:{t:'VIOLATIONS',s:'Discipline Log'},
+};
+
+// ══════════════════════════════
+// SITE RENDER
+// ══════════════════════════════
+function renderSite(){
+  document.getElementById('hero-motto').textContent=D.site.heroMotto;
+  document.getElementById('stat-members').textContent=D.members.length;
+  document.getElementById('stat-events').textContent=D.events.length;
+  document.getElementById('about-p1').innerHTML=D.site.ab1;
+  document.getElementById('about-p2').innerHTML=D.site.ab2;
+  document.getElementById('cmd-name').textContent=D.site.leaderName.toUpperCase();
+  document.getElementById('kp-name').textContent=D.site.leaderName.toUpperCase();
+  document.getElementById('cmd-quote').textContent=D.site.leaderQuote;
+  document.getElementById('cmd-id').textContent='ID: '+D.site.leaderId;
+
+  // Ranks
+  const rcnt={};D.members.forEach(m=>{rcnt[m.rank]=(rcnt[m.rank]||0)+1;});
+  const rd=[
+    {r:'king',n:'05',d:'Supreme leader. Gang ka founder. Har cheez ka final decision.'},
+    {r:'enforcer',n:'04',d:'Rules enforce karta hai. Violations handle karta hai. Shadow King ka right hand.'},
+    {r:'architect',n:'03',d:'Online presence — reels, posts, website. ShadowBorn ki digital identity.'},
+    {r:'connector',n:'02',d:'Events aur real life activities organize karta hai.'},
+    {r:'guardian',n:'01',d:'Recruitment aur naye members ko guide karta hai. Gang ki growth.'},
+  ];
+  document.getElementById('ranks-list').innerHTML=rd.map(r=>`
+    <div class="rank-card ${r.r==='king'?'king-card':''}">
+      <div class="rank-n">${r.n}</div>
+      <div class="rank-info">
+        <div class="rank-badge2">${RNK[r.r].l}</div>
+        <div class="rank-name">${r.r==='king'?'SHADOW KING':r.r.toUpperCase()}</div>
+        <div class="rank-desc">${r.d}</div>
+      </div>
+      <div class="rank-ct"><b>${rcnt[r.r]||0}</b><span>Members</span></div>
+    </div>`).join('');
+
+  // Members
+  document.getElementById('members-list').innerHTML=D.members.filter(m=>m.rank!=='fallen').map(m=>`
+    <div class="mc"><div class="mc-av">${m.av}</div>
+    <div class="mc-name">${m.name}</div>
+    <div class="mc-nick">"${m.nick}"</div>
+    <div class="mc-rank">${RNK[m.rank]?.l||m.rank}</div>
+    <div class="mc-city">📍 ${m.city}</div></div>`).join('');
+
+  // Rules
+  const rules=[
+    {n:'01',t:'LOYALTY & BETRAYAL',d:'Gang ka secret leak karna ya dhoka dena — permanent ban. Zero tolerance.',p:'PERMANENT BAN'},
+    {n:'02',t:'RESPECT & EGO',d:'Kisi bhi member ko humiliate karna strictly banned. Rank zimmedari deta hai.',p:'WARNING / STRIKE'},
+    {n:'03',t:'CONFLICT RESOLUTION',d:'Har problem Enforcer ya Shadow King ke paas lao. Public drama forbidden.',p:'PRIVATE ONLY'},
+    {n:'04',t:'SOCIAL MEDIA',d:'Gang ke internal issues kabhi public share mat karo.',p:'STRICT RULE'},
+    {n:'05',t:'NEW MEMBER CODE',d:'Faded period mein zero violations. 1 mahina — loyalty prove karo.',p:'1 MONTH'},
+    {n:'06',t:'PUNISHMENT SYSTEM',d:'Warning → Strike 1 → Strike 2 → Permanent Ban. Sab ke liye equal.',p:'4-LEVEL'},
+  ];
+  document.getElementById('rules-list').innerHTML=rules.map(r=>`
+    <div class="rc"><div class="rn">${r.n}</div><div class="rt">${r.t}</div><div class="rd">${r.d}</div><span class="rp">${r.p}</span></div>`).join('');
+
+  // Events
+  document.getElementById('events-list').innerHTML=D.events.map(ev=>`
+    <div class="ec2">
+      <div class="ev-d2">📅 ${ev.date}${ev.time?' · '+ev.time:''}</div>
+      <div class="ev-n2">${ev.name}</div>
+      <div class="ev-desc2">${ev.desc}</div>
+      <div class="ev-meta2"><span>📍 ${ev.loc}</span><span>👥 ${ev.members}</span><span>💰 ₹${ev.budget}</span></div>
+    </div>`).join('');
+}
+
+// ══════════════════════════════
+// APPLY FORM
+// ══════════════════════════════
+function openApply(){document.getElementById('apply-modal').classList.add('open');}
+function closeApply(){document.getElementById('apply-modal').classList.remove('open');}
+document.getElementById('apply-modal').addEventListener('click',e=>{if(e.target===document.getElementById('apply-modal'))closeApply();});
+
+function submitApplication(){
+  const name=$('af-name').value.trim();
+  const nick=$('af-nick').value.trim();
+  const dob=$('af-dob').value;
+  const city=$('af-city').value.trim();
+  const why=$('af-why').value.trim();
+  const oath=$('af-oath-check').checked;
+  if(!name||!nick||!city||!why){notif('Sab required fields bharo!','err');return;}
+  if(!oath){notif('Dark Oath accept karo pehle!','err');return;}
+  const app={
+    id:'APP-'+Date.now(),
+    name,nick,dob:dob||'Not provided',
+    city,phone:$('af-phone').value||'N/A',
+    ig:$('af-ig').value||'N/A',
+    ref:$('af-ref').value||'None',
+    why,motto:$('af-motto').value||'N/A',
+    date:new Date().toLocaleDateString('en-IN'),
+    status:'pending'
+  };
+  D.applications.push(app);
+  closeApply();
+  ['af-name','af-nick','af-dob','af-city','af-phone','af-ig','af-ref','af-why','af-motto'].forEach(i=>$(i).value='');
+  $('af-oath-check').checked=false;
+  updateBadges();
+  notif('✓ Application submitted! Shadow King review karega.');
+}
+
+function updateBadges(){
+  const pending=D.applications.filter(a=>a.status==='pending').length;
+  $('dapb').textContent=pending;
+  $('dov-ap').textContent=D.applications.length;
+  $('app-total').textContent=D.applications.length;
+}
+
+// ══════════════════════════════
+// PASSWORD
+// ══════════════════════════════
+const KING_PASS='shadowking001';
+let dashUnlocked=false;
+function openDash(){
+  if(dashUnlocked){document.getElementById('dash-overlay').classList.add('open');renderDash('ov');return;}
+  document.getElementById('pass-overlay').classList.add('open');
+  setTimeout(()=>$('pass-input').focus(),100);
+}
+function checkPass(){
+  if($('pass-input').value===KING_PASS){
+    dashUnlocked=true;
+    document.getElementById('pass-overlay').classList.remove('open');
+    $('pass-input').value='';$('pass-err').style.display='none';
+    document.getElementById('dash-overlay').classList.add('open');
+    renderDash('ov');notif('👑 Welcome, Shadow King!');
+  } else {
+    $('pass-err').style.display='block';
+    $('pass-input').value='';$('pass-input').focus();
+  }
+}
+function closeDash(){document.getElementById('dash-overlay').classList.remove('open');dashUnlocked=false;}
+
+// ══════════════════════════════
+// DASHBOARD NAV
+// ══════════════════════════════
+function dgo(id,el){
+  document.querySelectorAll('.dpage').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.di').forEach(i=>i.classList.remove('on'));
+  document.getElementById('dp-'+id).classList.add('active');
+  if(el)el.classList.add('on');
+  $('dptitle').textContent=DPI[id].t;
+  $('dpsub').textContent=DPI[id].s;
+  ({ov:dOv,apps:dApps,members:dM,ranks:dRk,fund:dF,events:dEv,editsite:dES,viols:dVl}[id]||Function)();
+}
+function renderDash(id){({ov:dOv,apps:dApps,members:dM,ranks:dRk,fund:dF,events:dEv,editsite:dES,viols:dVl}[id]||Function)();}
+
+// ══════════════════════════════
+// DASH RENDERS
+// ══════════════════════════════
+function drb(r){return `<span class="drb">${RNK[r]?.l||r}</span>`;}
+function dsd(s){const m={active:'s-on',warning:'s-wa',banned:'s-off'};return `<span class="sdot2 ${m[s]||'s-wa'}"></span>${s}`;}
+
+function dOv(){
+  $('dov-m').textContent=D.members.length;
+  $('dov-ap').textContent=D.applications.length;
+  const tIn=D.txns.filter(t=>t.type==='in').reduce((s,t)=>s+t.amt,0);
+  const tOut=D.txns.filter(t=>t.type==='out').reduce((s,t)=>s+t.amt,0);
+  $('dov-f').textContent='₹'+(tIn-tOut);
+  $('dov-v').textContent=D.viols.length;
+  $('dmb').textContent=D.members.length;
+  $('deb').textContent=D.events.length;
+  $('dvb').textContent=D.viols.length;
+  updateBadges();
+  $('dov-mt').innerHTML=D.members.slice(-4).reverse().map(m=>`<tr><td><b>${m.name}</b></td><td>${drb(m.rank)}</td><td>${dsd(m.status)}</td></tr>`).join('');
+}
+
+function dApps(){
+  updateBadges();
+  if(!D.applications.length){
+    $('apps-list').innerHTML='<div style="text-align:center;padding:40px;color:var(--g);font-family:Share Tech Mono;font-size:10px;letter-spacing:2px">> No applications yet. Share your website!</div>';
+    return;
+  }
+  $('apps-list').innerHTML=D.applications.map((a,i)=>`
+    <div class="app-card">
+      <div class="app-card-head">
+        <div>
+          <div class="app-name">${a.name} <span style="font-size:13px;color:var(--g)">"${a.nick}"</span></div>
+          <div class="app-date">${a.date}</div>
+        </div>
+        <span class="app-status app-${a.status}">${a.status.toUpperCase()}</span>
+      </div>
+      <div class="app-grid">
+        <div class="app-field"><label>Date of Birth</label><span>${a.dob}</span></div>
+        <div class="app-field"><label>City</label><span>${a.city}</span></div>
+        <div class="app-field"><label>Phone</label><span>${a.phone}</span></div>
+        <div class="app-field"><label>Instagram</label><span>${a.ig}</span></div>
+        <div class="app-field"><label>Referred By</label><span>${a.ref}</span></div>
+        <div class="app-field"><label>Motto</label><span>${a.motto}</span></div>
+      </div>
+      <div class="app-motto-txt">Why join: "${a.why}"</div>
+      ${a.status==='pending'?`<div class="app-actions">
+        <button class="dbtn dbtn-w dbtn-sm" onclick="acceptApp(${i})">✓ Accept</button>
+        <button class="dbtn dbtn-r dbtn-sm" onclick="rejectApp(${i})">✕ Reject</button>
+        <button class="dbtn dbtn-sm" onclick="addFromApp(${i})">+ Add as Member</button>
+      </div>`:`<div style="font-size:9px;color:var(--g);font-family:Share Tech Mono">Decision taken · ${a.status.toUpperCase()}</div>`}
+    </div>`).join('');
+}
+
+function acceptApp(i){
+  D.applications[i].status='accepted';
+  dApps();updateBadges();
+  notif('✓ Application accepted — '+D.applications[i].name);
+}
+function rejectApp(i){
+  if(confirm('Reject '+D.applications[i].name+'?')){
+    D.applications[i].status='rejected';
+    dApps();updateBadges();
+    notif('✕ Application rejected — '+D.applications[i].name);
+  }
+}
+function addFromApp(i){
+  const a=D.applications[i];
+  D.members.push({
+    id:'SB-3'+Math.floor(Math.random()*90+10),
+    name:a.name,nick:a.nick,rank:'faded',
+    city:a.city,phone:a.phone,ig:a.ig,
+    inv:a.ref||'Application',motto:a.motto,
+    joined:new Date().toLocaleDateString('en-IN',{month:'short',year:'numeric'}),
+    status:'active',strikes:0,av:'👤'
+  });
+  D.applications[i].status='accepted';
+  dApps();dOv();renderSite();
+  notif('✓ '+a.name+' added as Faded member!');
+}
+
+function dM(q=''){
+  $('dmt').innerHTML=D.members.filter(m=>!q||(m.name+m.nick+m.id).toLowerCase().includes(q)).map(m=>`<tr>
+    <td style="color:var(--g);font-size:9px;font-family:'Share Tech Mono'">${m.id}</td>
+    <td><b>${m.name}</b></td>
+    <td style="color:var(--g)">${m.nick}</td>
+    <td>${drb(m.rank)}</td>
+    <td style="color:var(--g);font-size:11px">${m.city}</td>
+    <td>${dsd(m.status)}</td>
+    <td style="color:${m.strikes>0?'var(--red)':'var(--g)'}">${m.strikes}/3</td>
+    <td>
+      <button class="dbtn dbtn-sm" onclick="editM('${m.id}')">✏</button>
+      <button class="dbtn dbtn-sm" onclick="promM('${m.id}')">↑</button>
+      <button class="dbtn dbtn-sm dbtn-r" onclick="strikeM('${m.id}')">⚠</button>
+      <button class="dbtn dbtn-sm dbtn-r" onclick="delM('${m.id}')">🗑</button>
+    </td>
+  </tr>`).join('');
+}
+function dsM(q){dM(q.toLowerCase());}
+
+function dRk(){
+  const cnt={};D.members.forEach(m=>{cnt[m.rank]=(cnt[m.rank]||0)+1;});
+  [
+    {r:'king',n:'05',d:'Supreme leader. Final authority.',du:'Full control.'},
+    {r:'enforcer',n:'04',d:'Rules enforce karta hai.',du:'Violations, punish, security.'},
+    {r:'architect',n:'03',d:'Online presence manage karta hai.',du:'Instagram, YouTube, X.'},
+    {r:'connector',n:'02',d:'Events organize karta hai.',du:'Meetups, rides, trips.'},
+    {r:'guardian',n:'01',d:'Recruitment handle karta hai.',du:'Invite, Faded monitor.'},
+  ].forEach(r=>{
+    const existing=$('drk-list');
+    existing.innerHTML=`<div style="display:flex;flex-direction:column;gap:6px">`+[
+      {r:'king',n:'05',d:'Supreme leader. Final authority.',du:'Full control.'},
+      {r:'enforcer',n:'04',d:'Rules enforce karta hai.',du:'Violations, punish, security.'},
+      {r:'architect',n:'03',d:'Online presence manage karta hai.',du:'Instagram, YouTube, X.'},
+      {r:'connector',n:'02',d:'Events organize karta hai.',du:'Meetups, rides, trips.'},
+      {r:'guardian',n:'01',d:'Recruitment handle karta hai.',du:'Invite, Faded monitor.'},
+    ].map(rr=>`<div style="background:#050505;border:1px solid rgba(255,255,255,0.06);padding:14px 18px;display:flex;gap:14px;align-items:center">
+      <div style="font-family:'Bebas Neue';font-size:28px;color:var(--b3);width:30px">${rr.n}</div>
+      <div style="flex:1">${drb(rr.r)}<div style="font-size:11px;color:var(--g);margin-top:4px">${rr.d} <span style="color:var(--b3)">· ${rr.du}</span></div></div>
+      <div style="text-align:right"><b style="font-family:'Bebas Neue';font-size:26px">${cnt[rr.r]||0}</b><div style="font-size:9px;color:var(--g)">members</div></div>
+    </div>`).join('')+`</div>`;
+  });
+}
+
+function dF(){
+  const tIn=D.txns.filter(t=>t.type==='in').reduce((s,t)=>s+t.amt,0);
+  const tOut=D.txns.filter(t=>t.type==='out').reduce((s,t)=>s+t.amt,0);
+  $('df-in').textContent='₹'+tIn;$('df-out').textContent='₹'+tOut;$('df-bal').textContent='₹'+(tIn-tOut);
+  $('df-break').innerHTML=[{n:'Outfits/Merch',p:25},{n:'Events',p:25},{n:'Content',p:20},{n:'Emergency',p:10},{n:'Savings',p:20}]
+    .map(b=>`<div class="bbar"><div class="bbl"><span>${b.n}</span><span>${b.p}%</span></div><div class="bbbg"><div class="bbf" style="width:${b.p}%"></div></div></div>`).join('');
+  $('dtx-list').innerHTML='<div>'+D.txns.slice().reverse().map(t=>`
+    <div class="txni"><div class="ti">${t.type==='in'?'💰':'📤'}</div>
+    <div style="flex:1"><div class="tn">${t.desc}</div><div class="td2">${t.date}</div></div>
+    <div class="ta ${t.type==='in'?'ta-in':'ta-out'}">${t.type==='in'?'+':'-'}₹${t.amt}</div></div>`).join('')+'</div>';
+}
+
+function dEv(){
+  $('dev-list').innerHTML=D.events.map((ev,i)=>`
+    <div class="decard">
+      <button class="de-del" onclick="delEv(${i})">🗑</button>
+      <div class="de-date">📅 ${ev.date}${ev.time?' · '+ev.time:''} · ${ev.loc}</div>
+      <div class="de-name">${ev.name}</div>
+      <div class="de-desc">${ev.desc}</div>
+      <div class="de-meta"><span>👥 ${ev.members}</span><span>💰 ₹${ev.budget}</span><span>📌 ${ev.status.toUpperCase()}</span></div>
+    </div>`).join('');
+}
+
+function dES(){
+  $('e-sub') && ($('e-sub').value='Dark by Origin. United by Soul.');
+  $('e-motto').value=D.site.heroMotto;
+  $('e-ab1').value=D.site.ab1.replace(/<[^>]+>/g,'');
+  $('e-ab2').value=D.site.ab2.replace(/<[^>]+>/g,'');
+  $('e-lname').value=D.site.leaderName;
+  $('e-lquote').value=D.site.leaderQuote;
+  $('e-lid').value=D.site.leaderId;
+}
+
+function dVl(){
+  const vsel=$('vm');
+  if(vsel)vsel.innerHTML=D.members.map(m=>`<option value="${m.name}">${m.name} (${m.id})</option>`).join('');
+  $('dvt').innerHTML=D.viols.length
+    ?D.viols.slice().reverse().map((v,i)=>`<tr><td><b>${v.member}</b></td><td style="color:var(--g)">${v.type}</td><td><span class="rp2">${v.action}</span></td><td style="color:var(--g);font-size:10px;font-family:Share Tech Mono">${v.date}</td><td><button class="dbtn dbtn-sm dbtn-r" onclick="delViol(${D.viols.length-1-i})">×</button></td></tr>`).join('')
+    :'<tr><td colspan="5" style="text-align:center;color:var(--g);padding:20px;font-family:Share Tech Mono;font-size:9px">No violations logged</td></tr>';
+}
+
+// ══════════════════════════════
+// ACTIONS
+// ══════════════════════════════
+function addMember(){
+  const name=$('an').value.trim();if(!name){notif('Naam daalo!','err');return;}
+  const rank=$('ar').value;
+  const px={faded:'SB-3',guardian:'SB-3',connector:'SB-2',architect:'SB-1',enforcer:'SB-0'};
+  const id=(px[rank]||'SB-4')+Math.floor(Math.random()*90+10);
+  D.members.push({id,name,nick:$('ank').value||'Shadow',rank,city:$('ac').value||'N/A',phone:$('aph').value||'N/A',ig:$('aig').value||'N/A',inv:$('ain').value||'Sahil',motto:$('amo').value||'ShadowBorn forever.',joined:'Mar 2026',status:'active',strikes:0,av:$('aav').value||'👤'});
+  closeDM('addM');['an','ank','ac','aph','aig','ain','amo','aav'].forEach(i=>$(i).value='');
+  dM();dOv();renderSite();notif('✓ '+name+' added!');
+}
+function editM(id){
+  const m=D.members.find(x=>x.id===id);if(!m)return;
+  $('en').value=m.name;$('enk').value=m.nick;$('er').value=m.rank;$('es').value=m.status;$('eci').value=m.city;$('estr').value=m.strikes;$('emo').value=m.motto;$('eid').value=id;
+  openDM('editM');
+}
+function saveEdit(){
+  const id=$('eid').value;const m=D.members.find(x=>x.id===id);if(!m)return;
+  m.name=$('en').value||m.name;m.nick=$('enk').value||m.nick;m.rank=$('er').value;m.status=$('es').value;m.city=$('eci').value||m.city;m.strikes=parseInt($('estr').value)||0;m.motto=$('emo').value||m.motto;
+  closeDM('editM');dM();dOv();renderSite();notif('✓ '+m.name+' updated!');
+}
+function delM(id){
+  const m=D.members.find(x=>x.id===id);
+  if(m?.rank==='king'){notif('Shadow King ko delete nahi!','err');return;}
+  if(confirm('Delete '+m?.name+'?')){D.members=D.members.filter(x=>x.id!==id);dM();dOv();renderSite();notif('🗑 Member removed.');}
+}
+function promM(id){
+  const m=D.members.find(x=>x.id===id);
+  const L=['faded','guardian','connector','architect','enforcer'];
+  const i=L.indexOf(m.rank);
+  if(i<0||i>=L.length-1){notif('Already max rank!','err');return;}
+  if(confirm('Promote '+m.name+' to '+RNK[L[i+1]].l+'?')){m.rank=L[i+1];dM();dOv();renderSite();notif('✓ '+m.name+' promoted!');}
+}
+function strikeM(id){
+  const m=D.members.find(x=>x.id===id);
+  if(m.rank==='king'){notif('Shadow King ko strike nahi!','err');return;}
+  if(confirm('Strike '+m.name+'? ('+m.strikes+'/3)')){
+    m.strikes++;
+    if(m.strikes>=3){if(confirm(m.name+' — 3 strikes. Ban?')){m.rank='fallen';m.status='banned';notif('💀 '+m.name+' is The Fallen.');}}
+    else{m.status=m.strikes>=2?'warning':'active';notif('⚠ Strike '+m.strikes+'/3 — '+m.name);}
+    dM();dOv();renderSite();
+  }
+}
+function addTxn(){
+  const type=$('tx-t').value,desc=$('tx-d').value.trim(),amt=parseInt($('tx-a').value);
+  if(!desc||!amt){notif('Sab fields bharo!','err');return;}
+  D.txns.push({type,desc,amt,date:'Mar 2026'});
+  $('tx-d').value='';$('tx-a').value='';dF();dOv();notif('✓ Transaction added!');
+}
+function addEvent(){
+  const name=$('evn').value.trim();if(!name){notif('Event naam daalo!','err');return;}
+  D.events.push({name:name.toUpperCase(),date:$('evd').value||'TBD',time:$('evt2').value||'',loc:$('evl').value||'TBD',desc:$('evdesc').value||'',members:parseInt($('evm').value)||0,budget:parseInt($('evb').value)||0,status:'planned'});
+  closeDM('addEv');['evn','evd','evt2','evl','evdesc','evm','evb'].forEach(i=>$(i).value='');
+  dEv();dOv();renderSite();notif('✓ Event created!');
+}
+function delEv(i){if(confirm('Delete event?')){D.events.splice(i,1);dEv();dOv();renderSite();notif('🗑 Event removed.');}}
+function addViol(){
+  const member=$('vm').value,type=$('vt2').value,detail=$('vdet').value,action=$('vact').value;
+  D.viols.push({member,type,detail,action,date:new Date().toLocaleDateString('en-IN')});
+  const m=D.members.find(x=>x.name===member);
+  if(m){if(action.includes('Strike')){m.strikes++;if(m.strikes>=3){m.rank='fallen';m.status='banned';}}if(action.includes('Ban')){m.rank='fallen';m.status='banned';}}
+  closeDM('addViol');$('vdet').value='';dVl();dOv();renderSite();notif('⚠ Violation logged for '+member);
+}
+function delViol(i){if(confirm('Remove?')){D.viols.splice(i,1);dVl();dOv();notif('Violation removed.');}}
+
+function updateHero(){
+  D.site.heroMotto=$('e-motto').value||D.site.heroMotto;renderSite();notif('✓ Hero updated!');
+}
+function updateAbout(){
+  D.site.ab1=$('e-ab1').value||D.site.ab1;D.site.ab2=$('e-ab2').value||D.site.ab2;renderSite();notif('✓ About updated!');
+}
+function updateLeader(){
+  D.site.leaderName=$('e-lname').value||D.site.leaderName;D.site.leaderQuote=$('e-lquote').value||D.site.leaderQuote;D.site.leaderId=$('e-lid').value||D.site.leaderId;renderSite();notif('✓ Leader updated!');
+}
+
+// UTILS
+function openDM(id){document.getElementById('dm-'+id).classList.add('open');}
+function closeDM(id){document.getElementById('dm-'+id).classList.remove('open');}
+document.querySelectorAll('.dov').forEach(m=>{m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('open');});});
+function $(id){return document.getElementById(id);}
+function notif(msg,type='ok'){
+  const n=$('notif');n.textContent=msg;n.className='notif'+(type==='err'?' err':'');
+  n.classList.add('show');setTimeout(()=>n.classList.remove('show'),2800);
+}
+setInterval(()=>{const c=$('dclock');if(c)c.textContent=new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});},1000);
+
+// Counter animation
+function animCount(el,target){
+  let s=0,step=target/50;
+  const iv=setInterval(()=>{s=Math.min(s+step,target);el.textContent=Math.floor(s);if(s>=target)clearInterval(iv);},30);
+}
+
+// INIT
+renderSite();
+setTimeout(()=>{
+  animCount($('stat-members'),D.members.length);
+  animCount($('stat-events'),D.events.length);
+},400);
+</script>
+</body>
+</html>
